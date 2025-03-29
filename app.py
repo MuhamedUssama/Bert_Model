@@ -12,7 +12,7 @@ MODEL_PATH = "Bert_person.pth"
 
 if not os.path.exists(MODEL_PATH):
     print("Downloading model file from Google Drive...")
-    gdown.download(f"https://drive.google.com/uc?id={FILE_ID}", MODEL_PATH, quiet=False)
+    gdown.cached_download(f"https://drive.google.com/uc?id={FILE_ID}", MODEL_PATH, quiet=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -60,7 +60,6 @@ def analyze_text():
         text = data['text']
         result = analyze_personality(text)
         
-        # Find the dominant trait
         max_trait = max(result, key=lambda x: float(result[x][:-1]))
         
         response = {
@@ -78,4 +77,5 @@ def health_check():
     return jsonify({'status': 'API is running'}), 200
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get("PORT", 5000))  
+    app.run(debug=False, host='0.0.0.0', port=port)
