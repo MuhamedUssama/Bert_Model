@@ -18,15 +18,33 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 
-model = BertForSequenceClassification.from_pretrained(
-    'bert-base-uncased',
-    num_labels=5,
-    problem_type="multi_label_classification"
-)
+# model = BertForSequenceClassification.from_pretrained(
+#     'bert-base-uncased',
+#     num_labels=5,
+#     problem_type="multi_label_classification"
+# )
 
-model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
-model.to(device)
-model.eval()
+# model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+# model.to(device)
+# model.eval()
+
+try:
+    print("Loading BERT model...")
+    model = BertForSequenceClassification.from_pretrained(
+        'bert-base-uncased',
+        num_labels=5,
+        problem_type="multi_label_classification"
+    )
+    print("Loading model weights from Bert_person.pth...")
+    model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    print("Moving model to device...")
+    model.to(device)
+    print("Setting model to evaluation mode...")
+    model.eval()
+    print("Model loaded successfully!")
+except Exception as e:
+    print(f"Error loading model: {str(e)}")
+    raise e
 
 trait_columns = ['Openness(O)', 'Conscientiousness(C)', 'Extraversion(E)', 'Agreeableness(A)', 'Neuroticism(N)']
 
